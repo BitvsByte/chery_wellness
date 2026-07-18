@@ -26,9 +26,9 @@ export default function Gallery() {
                   />
                   <div
                     aria-hidden="true"
-                    className="absolute inset-0 bg-[linear-gradient(180deg,transparent_60%,rgba(10,10,11,0.88))]"
+                    className="absolute inset-0 bg-[linear-gradient(180deg,transparent_70%,rgba(10,10,11,0.45))]"
                   />
-                  <figcaption className="absolute inset-x-4 bottom-3.5 text-[11px] font-bold uppercase tracking-[0.15em] text-bright">
+                  <figcaption className="glass-chip metal-rim glass-sheen absolute inset-x-3 bottom-3 rounded-xl px-3.5 py-2.5 text-[11px] font-bold uppercase tracking-[0.15em] text-bright">
                     {item.label}
                   </figcaption>
                 </figure>

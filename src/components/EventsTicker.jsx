@@ -46,7 +46,7 @@ export default function EventsTicker() {
         type="button"
         onClick={() => setPaused(!paused)}
         aria-pressed={paused}
-        className="absolute right-2 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-[rgba(17,18,19,0.85)] text-steel transition-colors hover:text-white"
+        className="glass-chip metal-rim absolute right-2 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-silver transition-colors hover:text-white"
       >
         <span className="sr-only">
           {paused ? 'Reanudar la cinta de eventos' : 'Pausar la cinta de eventos'}

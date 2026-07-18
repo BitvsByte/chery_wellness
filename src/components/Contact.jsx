@@ -80,13 +80,13 @@ export default function Contact() {
                 />
                 <div
                   aria-hidden="true"
-                  className="absolute inset-0 bg-[linear-gradient(180deg,transparent_50%,rgba(10,10,11,0.9))]"
+                  className="absolute inset-0 bg-[linear-gradient(180deg,transparent_65%,rgba(10,10,11,0.5))]"
                 />
-                <figcaption className="absolute inset-x-4 bottom-3.5">
+                <figcaption className="glass-chip metal-rim glass-sheen absolute inset-x-3 bottom-3 rounded-xl p-3.5">
                   <p className="font-display text-base font-semibold leading-snug text-bright">
                     {QUOTE.text}
                   </p>
-                  <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-dim">
+                  <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#aeb3ba]">
                     {QUOTE.author}
                   </p>
                 </figcaption>

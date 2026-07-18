@@ -7,7 +7,7 @@ export default function Header() {
   const close = () => setOpen(false)
 
   return (
-    <header className="sticky top-0 z-50 border-b border-line/70 bg-[rgba(20,21,23,0.88)] backdrop-blur-md">
+    <header className="glass-dark glass-sheen sticky top-0 z-50 border-b">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <a
           href="#inicio"
@@ -56,7 +56,7 @@ export default function Header() {
       <nav
         id="menu-movil"
         aria-label="Principal móvil"
-        className={`${open ? 'block' : 'hidden'} border-t border-line/60 bg-[rgba(17,18,19,0.97)] lg:hidden`}
+        className={`${open ? 'block' : 'hidden'} glass-dark border-t lg:hidden`}
       >
         <ul className="mx-auto flex max-w-6xl flex-col px-4 py-3">
           {NAV_LINKS.map((link) => (
