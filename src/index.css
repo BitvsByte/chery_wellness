@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-ink font-sans text-body antialiased;
+    -webkit-tap-highlight-color: transparent;
+    background-image: radial-gradient(
+      ellipse 120% 80% at 50% 0%,
+      #2a2b2e 0%,
+      #1a1b1d 40%,
+      #111213 100%
+    );
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    background-color: #c3c7cd;
+    color: #111213;
+  }
+
+  :focus-visible {
+    outline: 2px solid #e5e7eb;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #7c828c;
+  }
+
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  [role='button'] {
+    touch-action: manipulation;
+  }
+
+  /* Desplegables nativos legibles también en el modo oscuro de Windows */
+  select option {
+    background-color: #141415;
+    color: #e5e7eb;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Titulares con efecto cromo grabado — firma visual de la marca */
+  .text-chrome {
+    color: #dfe2e6;
+    background-image: linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #c8ccd2 35%,
+      #6f757e 62%,
+      #e8eaed 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.75));
+  }
+
+  /* Botón metálico pulido */
+  .btn-chrome {
+    @apply inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-lg border px-7 py-3 text-[13px] font-bold uppercase tracking-[0.15em] shadow-chrome transition-shadow duration-200;
+    background-image: linear-gradient(
+      180deg,
+      #f4f5f7 0%,
+      #c3c7cd 45%,
+      #8d939c 52%,
+      #c9cdd3 100%
+    );
+    color: #1f2430;
+    border-color: #565c66;
+  }
+  .btn-chrome:hover {
+    @apply shadow-chrome-glow;
+    color: #111827;
+  }
+
+  .btn-ghost {
+    @apply inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-lg border px-7 py-3 text-[13px] font-bold uppercase tracking-[0.15em] transition-colors duration-200;
+    border-color: rgba(170, 176, 185, 0.45);
+    color: #d7dae0;
+    background-color: rgba(255, 255, 255, 0.04);
+  }
+  .btn-ghost:hover {
+    background-color: rgba(255, 255, 255, 0.09);
+    color: #ffffff;
+  }
+
+  /* Panel grafito con luz cenital */
+  .panel {
+    @apply rounded-[22px] border border-line shadow-panel;
+    background-image: linear-gradient(165deg, #26272a, #151617);
+  }
+
+  .card {
+    @apply rounded-2xl border border-line shadow-card;
+    background-image: linear-gradient(170deg, #232426, #161718);
+  }
+
+  .input-base {
+    @apply w-full min-w-0 rounded-lg border bg-[#141415] px-3.5 py-3 text-base text-bright transition-colors duration-200;
+    border-color: rgba(156, 163, 175, 0.35);
+  }
+  .input-base:focus {
+    outline: none;
+    border-color: #9ca3af;
+    box-shadow: 0 0 0 3px rgba(156, 163, 175, 0.25);
+  }
+  .input-base[aria-invalid='true'] {
+    border-color: #f87171;
+  }
+
+  .field-label {
+    @apply mb-1.5 block text-[11px] font-bold uppercase tracking-[0.2em] text-steel;
+  }
+}

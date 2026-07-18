@@ -1,0 +1,13 @@
+# Chery Figueroa Wellness PRO
+
+Web oficial de Chery Figueroa, atleta profesional IFBB de la categoría Women's
+Wellness y entrenadora personal. Elite coaching de bodybuilding: posing de
+competición, dietas y puesta a punto (prep) y entrenamiento de altas mejoras.
+
+## Secciones
+
+- [Inicio](/#inicio): marca y servicios principales
+- [Nosotras](/#nosotras): equipo y filosofía
+- [Testimonios](/#testimonios): resultados de atletas del equipo
+- [Galería](/#galeria): fotos de competición
+- [Contacto](/#contacto): solicitud de consulta por WhatsApp o email
