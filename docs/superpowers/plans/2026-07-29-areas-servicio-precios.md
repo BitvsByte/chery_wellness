@@ -476,8 +476,17 @@ export default defineConfig({
 Crear `vitest.setup.js`:
 
 ```js
+import { afterEach } from 'vitest'
+import { cleanup } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
+
+// Testing Library solo auto-registra su cleanup si `globals: true` está
+// activo. Aquí los tests importan describe/it/expect de forma explícita, así
+// que registramos la limpieza a mano en lugar de activar los globales.
+afterEach(cleanup)
 ```
+
+Sin ese `afterEach(cleanup)`, cada `render()` deja su árbol en el DOM y los tests siguientes encuentran elementos duplicados: las consultas por rol o por texto fallan con «múltiples coincidencias». Todo fichero `.test.jsx` posterior depende de esta línea.
 
 - [ ] **Step 3: Escribir el test que falla**
 
