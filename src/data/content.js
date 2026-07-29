@@ -4,7 +4,7 @@ import { ROUTES } from './plans.js'
 
 export const CONTACT = {
   phone: '+34 677 00 67 45',
-  email: 'cheryfigueroa.pro@gmail.com',
+  email: 'figueroachery@gmail.com',
   instagram: '@chery_ifbbpro',
   // Handle de TikTok sin verificar: déjalo en null para no publicar un enlace
   // roto. Al rellenarlo, el canal reaparece solo en Contacto y en `sameAs`.
