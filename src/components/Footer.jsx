@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { NAV_LINKS } from '../data/content.js'
 
 export default function Footer() {
@@ -15,24 +16,25 @@ export default function Footer() {
         <nav aria-label="Pie de página">
           <ul className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[13px] font-semibold uppercase tracking-[0.18em]">
             {NAV_LINKS.map((link, i) => (
-              <li key={link.href} className="flex items-center gap-2">
+              <li key={link.to} className="flex items-center gap-2">
                 {i > 0 && (
                   <span aria-hidden="true" className="text-[#565c66]">
                     |
                   </span>
                 )}
-                <a
-                  href={link.href}
+                <Link
+                  to={link.to}
                   className="inline-block py-2 text-[#b6bac1] transition-colors hover:text-white"
                 >
                   {link.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
         </nav>
         <p className="text-center text-[11px] uppercase tracking-wider text-[#7c828c]">
-          © 2026 Chery Figueroa Wellness PRO · Elite Coaching · Bodybuilding · Wellness Aesthetics
+          © 2026 <span translate="no">Chery Figueroa Wellness PRO</span> · Elite Coaching ·
+          Bodybuilding · Wellness Aesthetics
         </p>
       </div>
     </footer>

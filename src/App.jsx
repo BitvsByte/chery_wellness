@@ -1,14 +1,8 @@
+import { Routes, Route } from 'react-router-dom'
 import Header from './components/Header.jsx'
-import Hero from './components/Hero.jsx'
-import Services from './components/Services.jsx'
-import EventsTicker from './components/EventsTicker.jsx'
-import About from './components/About.jsx'
-import Testimonials from './components/Testimonials.jsx'
-import Gallery from './components/Gallery.jsx'
-import Faq from './components/Faq.jsx'
-import Contact from './components/Contact.jsx'
 import Footer from './components/Footer.jsx'
-import SectionDivider from './components/ui/SectionDivider.jsx'
+import Home from './pages/Home.jsx'
+import { ROUTES } from './data/plans.js'
 
 export default function App() {
   return (
@@ -21,19 +15,9 @@ export default function App() {
       </a>
       <Header />
       <main id="contenido">
-        <Hero />
-        <Services />
-        <EventsTicker />
-        <SectionDivider />
-        <About />
-        <SectionDivider />
-        <Testimonials />
-        <SectionDivider />
-        <Gallery />
-        <SectionDivider />
-        <Faq />
-        <SectionDivider />
-        <Contact />
+        <Routes>
+          <Route path={ROUTES.home} element={<Home />} />
+        </Routes>
       </main>
       <Footer />
     </>

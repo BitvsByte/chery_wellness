@@ -1,3 +1,5 @@
+import { ROUTES } from './plans.js'
+
 // Contenido de marca centralizado — un solo lugar para editar textos y datos.
 
 export const CONTACT = {
@@ -19,12 +21,12 @@ export const CONTACT_LINKS = {
 }
 
 export const NAV_LINKS = [
-  { href: '#inicio', label: 'Inicio' },
-  { href: '#nosotras', label: 'Nosotras' },
-  { href: '#servicios', label: 'Servicios' },
-  { href: '#testimonios', label: 'Testimonios' },
-  { href: '#galeria', label: 'Galería' },
-  { href: '#contacto', label: 'Contacto' },
+  { to: ROUTES.home, label: 'Inicio' },
+  { to: ROUTES.training, label: 'Entrenamiento' },
+  { to: ROUTES.posing, label: 'Posing' },
+  { to: `${ROUTES.home}#nosotras`, label: 'Nosotras' },
+  { to: `${ROUTES.home}#galeria`, label: 'Galería' },
+  { to: `${ROUTES.home}#contacto`, label: 'Contacto' },
 ]
 
 export const SERVICES = [
