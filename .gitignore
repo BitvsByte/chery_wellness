@@ -8,3 +8,5 @@ desktop.ini
 .env
 .claude
 .superpowers
+test-results
+playwright-report

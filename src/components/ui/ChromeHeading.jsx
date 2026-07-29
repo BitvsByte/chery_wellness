@@ -6,7 +6,7 @@ export default function ChromeHeading({ as: Tag = 'h2', id, className = '', chil
   return (
     <Tag
       id={id}
-      className={`text-chrome text-center font-display font-extrabold uppercase tracking-[0.1em] [text-wrap:balance] ${className}`}
+      className={`text-chrome text-center font-display font-extrabold uppercase tracking-[0.1em] [text-wrap:balance] break-words ${className}`}
     >
       {children}
     </Tag>

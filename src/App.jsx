@@ -1,14 +1,13 @@
+import { Routes, Route } from 'react-router-dom'
 import Header from './components/Header.jsx'
-import Hero from './components/Hero.jsx'
-import Services from './components/Services.jsx'
-import EventsTicker from './components/EventsTicker.jsx'
-import About from './components/About.jsx'
-import Testimonials from './components/Testimonials.jsx'
-import Gallery from './components/Gallery.jsx'
-import Faq from './components/Faq.jsx'
-import Contact from './components/Contact.jsx'
 import Footer from './components/Footer.jsx'
-import SectionDivider from './components/ui/SectionDivider.jsx'
+import Home from './pages/Home.jsx'
+import TrainingPage from './pages/TrainingPage.jsx'
+import PosingPage from './pages/PosingPage.jsx'
+import NotFoundPage from './pages/NotFoundPage.jsx'
+import ScrollToHash from './components/ScrollToHash.jsx'
+import DocumentHead from './components/DocumentHead.jsx'
+import { ROUTES } from './data/plans.js'
 
 export default function App() {
   return (
@@ -19,21 +18,19 @@ export default function App() {
       >
         Saltar al contenido principal
       </a>
+      <DocumentHead />
+      <ScrollToHash />
       <Header />
       <main id="contenido">
-        <Hero />
-        <Services />
-        <EventsTicker />
-        <SectionDivider />
-        <About />
-        <SectionDivider />
-        <Testimonials />
-        <SectionDivider />
-        <Gallery />
-        <SectionDivider />
-        <Faq />
-        <SectionDivider />
-        <Contact />
+        <Routes>
+          <Route path={ROUTES.home} element={<Home />} />
+          <Route path={ROUTES.training} element={<TrainingPage />} />
+          <Route path={ROUTES.posing} element={<PosingPage />} />
+          {/* Sin comodín, una URL desconocida dejaba `#contenido` vacío: un
+              200 en blanco con el <head> de la portada, indexable como
+              soft-404. */}
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
       </main>
       <Footer />
     </>

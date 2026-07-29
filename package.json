@@ -8,20 +8,31 @@
     "dev": "vite",
     "build": "npm run build:ssr && vite build",
     "build:ssr": "vite build --ssr src/entry-server.jsx --outDir dist-ssr",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "check": "npm test && npm run build && node scripts/check-precache.mjs && npm run test:e2e"
   },
   "dependencies": {
     "@fontsource-variable/plus-jakarta-sans": "^5.2.5",
     "@fontsource/playfair-display": "^5.2.5",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.4"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
+    "@playwright/test": "^1.62.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
+    "jsdom": "^25.0.1",
     "postcss": "^8.5.1",
     "tailwindcss": "^3.4.17",
     "vite": "^6.1.0",
-    "vite-plugin-pwa": "^0.21.1"
+    "vite-plugin-pwa": "^0.21.1",
+    "vitest": "^2.1.9"
   }
 }

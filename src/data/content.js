@@ -1,3 +1,5 @@
+import { ROUTES } from './plans.js'
+
 // Contenido de marca centralizado — un solo lugar para editar textos y datos.
 
 export const CONTACT = {
@@ -19,54 +21,12 @@ export const CONTACT_LINKS = {
 }
 
 export const NAV_LINKS = [
-  { href: '#inicio', label: 'Inicio' },
-  { href: '#nosotras', label: 'Nosotras' },
-  { href: '#servicios', label: 'Servicios' },
-  { href: '#testimonios', label: 'Testimonios' },
-  { href: '#galeria', label: 'Galería' },
-  { href: '#contacto', label: 'Contacto' },
-]
-
-export const SERVICES = [
-  {
-    id: 'servicio-posing',
-    img: '/uploads/chery_2.jpeg',
-    imgAlt:
-      'Chery Figueroa posando en la tarima del Miami Pro con bikini de competición azul',
-    imgWidth: 1080,
-    imgHeight: 1672,
-    imgPos: '50% 12%',
-    tag: 'Domina el escenario',
-    title: 'Posing de Competición (Bikini Wellness)',
-    desc: 'Técnica de pose frontal, transiciones y poses reglamentarias Wellness. Posing para Bikini y Wellness con Chery Figueroa, Atleta Internacional.',
-    cta: 'Ver detalles',
-  },
-  {
-    id: 'servicio-dietas',
-    img: '/uploads/chery_4.jpeg',
-    imgAlt:
-      'Chery Figueroa en condición de competición durante el IFBB Pro League de Pittsburgh',
-    imgWidth: 1080,
-    imgHeight: 1718,
-    imgPos: '50% 10%',
-    tag: 'Nutrición de élite',
-    title: 'Dietas & Puesta a Punto (Prep)',
-    desc: 'Planes nutricionales específicos para cada etapa, definición extrema y puesta a punto de competición. Maximiza tus resultados.',
-    cta: 'Aplicar',
-  },
-  {
-    id: 'servicio-entrenos',
-    img: '/uploads/chery_1.jpeg',
-    imgAlt:
-      'Pose de espalda de Chery Figueroa mostrando el desarrollo de glúteo y pierna de la línea Wellness',
-    imgWidth: 1080,
-    imgHeight: 1592,
-    imgPos: '50% 40%',
-    tag: 'Entreno de campeona',
-    title: 'Entrenamientos de Altas Mejoras',
-    desc: 'Planes de entrenamiento específicos para altas mejoras físicas, de principiante a atleta Wellness Pro. Transformación total.',
-    cta: 'Ver detalles',
-  },
+  { to: ROUTES.home, label: 'Inicio' },
+  { to: ROUTES.training, label: 'Entrenamiento' },
+  { to: ROUTES.posing, label: 'Posing' },
+  { to: `${ROUTES.home}#nosotras`, label: 'Nosotras' },
+  { to: `${ROUTES.home}#galeria`, label: 'Galería' },
+  { to: `${ROUTES.home}#contacto`, label: 'Contacto' },
 ]
 
 export const EVENTS = [
@@ -187,24 +147,37 @@ export const FAQS = [
   {
     q: '¿Necesito experiencia para empezar?',
     a: 'No. El método está pensado para llevarte de cero a competir. Empezamos con una evaluación de tu punto de partida y construimos base de entrenamiento, nutrición y posing por etapas.',
+    area: 'training',
   },
   {
     q: '¿El coaching es online o presencial?',
     a: 'Ambos. Las asesorías de nutrición y entrenamiento funcionan 100% online con seguimiento semanal. Las clases de posing pueden ser presenciales en España u online por videollamada con corrección en directo.',
+    area: 'posing',
   },
   {
     q: '¿Cuánto dura una preparación completa?',
     a: 'Depende de tu punto de partida. Una primera competición suele requerir entre 8 y 14 meses: fase de mejora, fase de definición y puesta a punto. En la consulta inicial te damos una estimación honesta.',
+    area: 'training',
   },
   {
     q: '¿Qué incluye el seguimiento?',
     a: 'Plan de entrenamiento y dieta personalizados, ajustes semanales con fotos y feedback, técnica de posing, planificación de temporada y acceso directo a Chery por WhatsApp.',
+    area: 'training',
   },
   {
     q: '¿Y si no quiero competir?',
     a: 'También trabajamos mejora física sin tarima: recomposición corporal con el mismo nivel de exigencia y personalización que una prep de competición.',
+    area: 'training',
   },
 ]
+
+/**
+ * Reparto EXCLUSIVO por área de las FAQ ya existentes: cada pregunta vive en
+ * una sola página de servicio, para no publicar el mismo marcado de pregunta
+ * en dos URLs (la home sigue mostrando las cinco, sin repartir).
+ */
+export const FAQS_TRAINING = FAQS.filter((faq) => faq.area === 'training')
+export const FAQS_POSING = FAQS.filter((faq) => faq.area === 'posing')
 
 export const QUOTE = {
   img: '/uploads/chery_3.jpeg',

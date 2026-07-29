@@ -17,7 +17,7 @@ Spec: `docs/superpowers/specs/2026-07-29-areas-servicio-precios-design.md`
 - **Idioma:** todo el texto de interfaz, comentarios y mensajes de commit en español.
 - **Precios exactos, con IVA incluido:** Start 1 mes 100 €, 3 meses 250 €. Competición 1 mes 150 €, 3 meses 350 €, 6 meses 600 €. Posing 1 clase 60 €, 4 clases 200 €. Todas las clases de posing duran 45 min.
 - **Contacto real:** `+34 677 00 67 45`, `@chery_ifbbpro`. No reintroducir los valores de marcador de posición.
-- **Accesibilidad:** contraste mínimo 4.5:1, destinos táctiles de 44×44 px, texto de cuerpo nuevo a 15–16 px en móvil, un solo `<h1>` por ruta.
+- **Accesibilidad:** contraste mínimo 4.5:1; texto de cuerpo nuevo a 15–16 px en móvil; un solo `<h1>` por ruta. Destinos táctiles: **44×44 px en botones y CTA** (`<button>`, `.btn-chrome`, `.btn-ghost`), **24×24 px en enlaces de navegación**. Los enlaces de cabecera y pie no se agrandan: cumplen el criterio AA y conservar el diseño es requisito del encargo.
 - **No se inventan hechos.** Ninguna afirmación nueva sobre el método, resultados o credenciales de Chery más allá de lo que ya consta en `content.js`.
 - **Orden del build inalterable:** `build:ssr` antes de `vite build`; el prerender ocurre antes de que vite-plugin-pwa calcule el precache.
 
@@ -476,8 +476,17 @@ export default defineConfig({
 Crear `vitest.setup.js`:
 
 ```js
+import { afterEach } from 'vitest'
+import { cleanup } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
+
+// Testing Library solo auto-registra su cleanup si `globals: true` está
+// activo. Aquí los tests importan describe/it/expect de forma explícita, así
+// que registramos la limpieza a mano en lugar de activar los globales.
+afterEach(cleanup)
 ```
+
+Sin ese `afterEach(cleanup)`, cada `render()` deja su árbol en el DOM y los tests siguientes encuentran elementos duplicados: las consultas por rol o por texto fallan con «múltiples coincidencias». Todo fichero `.test.jsx` posterior depende de esta línea.
 
 - [ ] **Step 3: Escribir el test que falla**
 
@@ -685,7 +694,10 @@ const renderCard = () =>
 describe('AreaCard', () => {
   it('muestra el precio de entrada del área', () => {
     renderCard()
-    expect(screen.getByText(/100\u00A0€/)).toBeInTheDocument()
+    // Espacio NORMAL, no U+00A0: el normalizador por defecto de Testing Library
+    // colapsa el espacio duro antes de comparar, asi que una regex con espacio
+    // duro no coincidiria nunca. El espacio duro real se verifica en format.test.js.
+    expect(screen.getByText(/100 €/)).toBeInTheDocument()
     expect(screen.getByText(/mes/)).toBeInTheDocument()
   })
 
@@ -766,7 +778,7 @@ export default function AreaCard({ area, to, unit, img, imgAlt }) {
         <p className="mt-2.5 flex-1 text-[15px] leading-relaxed text-body [text-wrap:pretty]">
           {area.summary}
         </p>
-        <p className="mt-4 text-sm text-dim">
+        <p className="mt-4 text-[15px] text-dim">
           Desde{' '}
           <span className="nums font-display text-xl font-bold text-bright">
             {formatEuro(cheapest(area))}
@@ -1592,6 +1604,31 @@ ${urls}
 }
 ```
 
+- [ ] **Step 5b: Alinear el catálogo de la home con las dos áreas**
+
+`homeGraph` deriva hoy su `serviceType` y su `hasOfferCatalog` de `SERVICES`, que describe los tres servicios antiguos. Tras la reestructuración la home muestra dos áreas, así que el schema estaría anunciando una oferta que la página ya no tiene. En `src/data/seo.js:107` y `:111`, sustituir ambos usos:
+
+```js
+        serviceType: [TRAINING.name, POSING.name],
+        hasOfferCatalog: {
+          '@type': 'OfferCatalog',
+          name: 'Áreas de coaching',
+          itemListElement: [TRAINING, POSING].map((area) => ({
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Service',
+              name: area.name,
+              description: area.summary,
+              url: `${SITE.url}${area.slug}`,
+              provider: { '@id': `${SITE.url}/#business` },
+              areaServed: { '@type': 'Country', name: 'España' },
+            },
+          })),
+        },
+```
+
+Quitar `SERVICES` del `import` de `./content.js` en `src/data/seo.js:5`, y borrar el export `SERVICES` de `src/data/content.js`: tras la tarea 6 ya no lo usa nadie más.
+
 - [ ] **Step 6: Escribir el test de la capa SEO**
 
 Esta tarea se verifica sola, sin depender del prerender. Crear `src/data/seo.test.js`:
@@ -1923,15 +1960,23 @@ for (const route of ROUTES) {
       expect(overflow).toBeLessThanOrEqual(0)
     })
 
-    test(`destinos táctiles de 44px en ${route} a ${width}px`, async ({ page }) => {
+    // Botones y CTA a 44 px (criterio AAA de WCAG 2.5.5), enlaces de
+    // navegación a 24 px (criterio AA de WCAG 2.5.8). El menú y el pie usan
+    // enlaces de texto y no se agrandan: conservar el diseño es un requisito.
+    test(`destinos táctiles suficientes en ${route} a ${width}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 900 })
       await page.goto(route)
-      const small = await page.evaluate(() =>
-        [...document.querySelectorAll('a, button')]
+      const small = await page.evaluate(() => {
+        const min = (el) => (el.tagName === 'BUTTON' || el.classList.contains('btn-chrome') || el.classList.contains('btn-ghost') ? 44 : 24)
+        return [...document.querySelectorAll('a, button')]
           .filter((el) => el.offsetParent !== null)
-          .map((el) => ({ text: el.textContent.trim().slice(0, 30), h: el.getBoundingClientRect().height }))
-          .filter((el) => el.h > 0 && el.h < 44),
-      )
+          .map((el) => ({
+            text: el.textContent.trim().slice(0, 30),
+            h: el.getBoundingClientRect().height,
+            min: min(el),
+          }))
+          .filter((el) => el.h > 0 && el.h < el.min)
+      })
       expect(small).toEqual([])
     })
   }

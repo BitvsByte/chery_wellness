@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import { BrowserRouter } from 'react-router-dom'
 import '@fontsource/playfair-display/600.css'
 import '@fontsource/playfair-display/700.css'
 import '@fontsource/playfair-display/800.css'
@@ -11,7 +12,9 @@ const container = document.getElementById('root')
 
 const tree = (
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </React.StrictMode>
 )
 
