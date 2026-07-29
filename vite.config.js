@@ -1,4 +1,4 @@
-import { existsSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { defineConfig } from 'vite'
@@ -10,18 +10,26 @@ import {
   buildMetaTags,
   buildRobots,
   buildSitemap,
+  renderHead,
 } from './src/data/seo.js'
+import { ROUTES } from './src/data/plans.js'
 
 const ROOT = dirname(fileURLToPath(import.meta.url))
 const SSR_ENTRY = resolve(ROOT, 'dist-ssr/entry-server.js')
 
+// Marcador que deja `transformIndexHtml` en build, para que `closeBundle` lo
+// sustituya por el <head> de cada ruta una vez conoce el HTML final con las
+// etiquetas de assets.
+const SEO_SLOT = '<!--CHERY_SEO-->'
+
 /**
  * Inyecta en `index.html` la canónica, las tarjetas sociales y el JSON-LD, y
- * en build incrusta el HTML ya renderizado dentro de `#root`.
+ * en build genera en `closeBundle` el HTML ya renderizado de las tres rutas.
  *
- * El prerender ocurre en `transformIndexHtml`, es decir, ANTES de que
- * vite-plugin-pwa calcule el manifiesto de precache. Si se hiciera después,
- * el hash de `index.html` en `sw.js` quedaría desincronizado.
+ * El prerender ocurre en `closeBundle`, que corre después de que Vite haya
+ * escrito `dist/` y ANTES del `closeBundle` de vite-plugin-pwa, porque este
+ * plugin aparece antes en el array de plugins. Por eso workbox calcula los
+ * hashes de precache sobre los HTML ya finales.
  */
 function seoHtml({ isBuild }) {
   return {
@@ -55,27 +63,59 @@ function seoHtml({ isBuild }) {
           injectTo: 'head',
         })
 
-        // Sólo prerenderizamos en build. En `npm run dev` el bundle de
-        // `dist-ssr/` puede existir de un build anterior y estaría obsoleto
-        // respecto al código en edición, así que se sirve la SPA normal.
-        if (!isBuild || !existsSync(SSR_ENTRY)) return { html, tags }
-
-        const { render } = await import(pathToFileURL(SSR_ENTRY).href)
-        return {
-          html: html.replace(
-            '<div id="root"></div>',
-            `<div id="root">${render()}</div>`,
-          ),
-          tags,
+        // En build generamos las tres rutas en closeBundle, donde ya
+        // conocemos el HTML final con las etiquetas de assets. Aquí solo
+        // dejamos el hueco.
+        if (isBuild) {
+          return html.replace('</head>', `${SEO_SLOT}\n  </head>`)
         }
+
+        return { html, tags }
       },
     },
 
-    closeBundle() {
+    // `closeBundle` corre después de que Vite haya escrito dist/ y ANTES del
+    // closeBundle de vite-plugin-pwa, porque este plugin va primero en el
+    // array. Por eso workbox calcula los hashes sobre los HTML ya finales.
+    //
+    // En `npm run dev` este hook no se registra en absoluto (ver más abajo,
+    // donde `seoHtml` sólo se añade al array de plugins en build), así que
+    // el bundle potencialmente obsoleto de `dist-ssr/` nunca se usa fuera de
+    // un build real.
+    async closeBundle() {
+      // En dev este hook no debería dispararse (closeBundle es de Rollup, no
+      // del servidor de dev), pero comprobamos igualmente `isBuild` y que el
+      // bundle SSR exista: así nunca se sirve un prerender obsoleto.
+      if (!isBuild || !existsSync(SSR_ENTRY)) return
+
+      const distDir = resolve(ROOT, 'dist')
+      const template = readFileSync(resolve(distDir, 'index.html'), 'utf8')
+
+      if (!template.includes(SEO_SLOT)) {
+        this.error('No se encontró el marcador de SEO en dist/index.html')
+      }
+
+      const { render } = await import(pathToFileURL(SSR_ENTRY).href)
+
+      for (const [key, route] of Object.entries(ROUTES)) {
+        const head = renderHead(key)
+        const body = render(route)
+        const html = template
+          .replace(SEO_SLOT, head)
+          .replace('<div id="root"></div>', `<div id="root">${body}</div>`)
+
+        const file =
+          route === '/'
+            ? resolve(distDir, 'index.html')
+            : resolve(distDir, route.replace(/^\//, ''), 'index.html')
+        mkdirSync(dirname(file), { recursive: true })
+        writeFileSync(file, html)
+      }
+
       const lastmod = new Date().toISOString().slice(0, 10)
-      writeFileSync(resolve(ROOT, 'dist/sitemap.xml'), buildSitemap(lastmod))
-      writeFileSync(resolve(ROOT, 'dist/robots.txt'), buildRobots())
-      this.info(`sitemap.xml y robots.txt generados para ${SITE.url}`)
+      writeFileSync(resolve(distDir, 'sitemap.xml'), buildSitemap(lastmod))
+      writeFileSync(resolve(distDir, 'robots.txt'), buildRobots())
+      this.info(`Prerenderizadas ${Object.keys(ROUTES).length} rutas`)
     },
   }
 }
