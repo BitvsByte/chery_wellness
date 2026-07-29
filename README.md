@@ -8,7 +8,10 @@ entrenadora personal: elite coaching de posing, dietas de prep y entrenamiento.
 - **React 18 + Vite 6** — SPA por componentes
 - **react-router-dom** — tres rutas: portada y dos páginas de servicio (ver `## Rutas`)
 - **Tailwind CSS 3** — design system con tokens de marca (grafito + cromo plateado)
-- **vite-plugin-pwa** — instalable y offline (service worker con precache)
+- **vite-plugin-pwa** — instalable y offline: las tres rutas cargan sin conexión
+  en su forma canónica (`/`, `/entrenamiento-y-dietas`, `/posing`), y una URL
+  desconocida muestra el aviso de «página no encontrada» en vez de un error de
+  red (ver `## Service worker`)
 - **Fontsource** — Playfair Display y Plus Jakarta Sans autoalojadas (sin CDN externos)
 - Sin base de datos: el formulario redacta la solicitud y la abre en WhatsApp o email
 
@@ -23,6 +26,10 @@ La web tiene tres rutas, todas prerenderizadas en el build y listadas en
 
 Cada ruta tiene su propio `<h1>`, su propia canónica y su propio JSON-LD (ver
 `## SEO`); las dos páginas de servicio comparten plantilla (`ServicePage.jsx`).
+
+Cualquier otra URL cae en la ruta comodín y muestra `NotFoundPage.jsx`: un
+aviso sobrio con enlaces a las tres rutas, marcado `noindex` para que no se
+indexe como soft-404.
 
 ## Tarifas
 
@@ -46,7 +53,7 @@ npm run dev       # desarrollo en http://localhost:5173
 npm run build     # build SSR + cliente, con prerender de las tres rutas y SEO, en dist/
 npm run preview   # sirve dist/ en http://localhost:4173
 npm test          # tests unitarios y de componentes (Vitest)
-npm run test:e2e  # axe-core, anchos de pantalla, destinos táctiles e hidratación del service worker en las tres rutas (Playwright)
+npm run test:e2e  # axe-core, anchos, destinos táctiles, service worker y carga sin conexión (Playwright)
 npm run check     # verificación completa antes de desplegar: test + build + precache + test:e2e
 ```
 
@@ -62,12 +69,37 @@ aborta con error en vez de publicar en silencio un HTML roto con un
 `<div id="root">` vacío.
 
 `npm run check` es la verificación completa antes de desplegar: encadena los
-tests unitarios, el build, la comprobación de que el hash de cada `index.html`
-coincide con el precache de `sw.js` (`scripts/check-precache.mjs`) y la suite
+tests unitarios, el build, `scripts/check-precache.mjs` (que comprueba que el
+hash de cada `index.html` coincide con el precache de `sw.js` y que cada ruta
+de servicio está precacheada también en su forma sin barra final) y la suite
 de Playwright, que en las tres rutas comprueba axe-core sin violaciones,
 ausencia de scroll horizontal en cinco anchos (320 a 1440 px), destinos
-táctiles suficientes, ausencia de avisos de hidratación en consola y que el
-service worker no sirva el HTML de la home a las páginas de servicio.
+táctiles suficientes y ausencia de avisos de hidratación en consola. Sobre el
+service worker comprueba además, con el SW ya controlando la pestaña, que
+cada ruta de servicio recibe su propio documento — también cuando la URL
+llega con `?igshid=`, `?fbclid=` o UTM, como reparten Instagram, Facebook y
+las campañas — y que las tres rutas canónicas cargan con la red cortada
+(`context.setOffline(true)`, en `tests/e2e/offline.spec.js`).
+
+## Service worker
+
+Tres detalles del `generateSW` de workbox que conviene no perder de vista; los
+patrones se derivan de `ROUTES` en `src/utils/sw-routes.js` y están probados
+en `src/utils/sw-routes.test.js`:
+
+- **La denylist del `NavigationRoute` se compara contra `pathname + search`**,
+  no contra el pathname solo. Un patrón anclado al final (`^/posing/?$`) deja
+  fuera del fallback a `/posing` pero no a `/posing?igshid=…`, que acababa
+  recibiendo el HTML de la portada. Por eso los patrones terminan en
+  `(/|\?|$)`.
+- **La portada NO va en la denylist**: su fallback es `index.html`, que es su
+  propio documento. Dejarla dentro del fallback es además lo que permite que
+  una URL desconocida pinte el aviso de «página no encontrada» sin conexión.
+- **El precache no encuentra `/posing` por sí solo**: guarda
+  `posing/index.html`, y para una URL sin barra final workbox sólo prueba
+  `/posing` y `/posing.html`. Se añade una entrada de precache por ruta con la
+  forma sin barra y la misma revisión que su HTML (`buildRouteAliasEntries`),
+  que es la forma canónica del sitemap, del menú y de Cloudflare Pages.
 
 ## SEO
 
@@ -90,6 +122,10 @@ por cada una de las tres rutas:
   edites a mano)
 - HTML prerenderizado por ruta: el crawler recibe la página completa, no un
   `<div>` vacío
+- `DocumentHead.jsx` mantiene `<title>`, canónica y `robots` al día en las
+  navegaciones internas (leyendo `PAGES`, sin duplicar los textos): sin él sólo
+  las cargas completas recibían el `<head>` correcto, y la pestaña, los
+  marcadores y la analítica se quedaban con los de la portada
 
 Pendiente: al confirmar la ciudad, sustituir `areaServed` por `address` + `geo`
 y elevar `ProfessionalService` a `LocalBusiness` para optar al pack local.
@@ -106,10 +142,12 @@ src/
 ├── main.jsx                # arranque cliente: BrowserRouter + hidratación
 ├── utils/validation.js    # patrones de lista blanca + saneado del formulario
 ├── utils/format.js         # formatEuro, compartido por servidor y cliente
+├── utils/sw-routes.js      # denylist y alias de precache del service worker, derivados de ROUTES
 ├── pages/
 │   ├── Home.jsx             # portada: Hero, Areas, ticker, Nosotras, testimonios, galería, FAQ, contacto
 │   ├── TrainingPage.jsx     # /entrenamiento-y-dietas
-│   └── PosingPage.jsx       # /posing
+│   ├── PosingPage.jsx       # /posing
+│   └── NotFoundPage.jsx     # ruta comodín: aviso sobrio + enlaces, noindex
 ├── components/
 │   ├── ui/                # primitivas: ChromeHeading, Field, Icons, SectionDivider
 │   ├── Header.jsx         # nav sticky + menú móvil accesible
@@ -119,7 +157,8 @@ src/
 │   ├── PlanGrid.jsx         # rejilla de PlanCard de una página de servicio
 │   ├── PlanCard.jsx         # tarjeta de un plan con su escalera de precios
 │   ├── ServicePage.jsx      # plantilla común de las dos páginas de servicio
-│   ├── ScrollToHash.jsx     # repone el scroll a ancla o arriba al cambiar de ruta
+│   ├── DocumentHead.jsx     # título, canónica y robots por ruta en navegación cliente
+│   ├── ScrollToHash.jsx     # repone el scroll a ancla o arriba, y mueve el foco, al cambiar de ruta
 │   ├── EventsTicker.jsx   # cinta de eventos pausable (WCAG 2.2.2)
 │   ├── About.jsx          # Nosotras + pedestal de tarima
 │   ├── Testimonials.jsx   # testimonios de atletas
@@ -154,6 +193,10 @@ AA) sin violaciones en las tres rutas — ver `tests/e2e/a11y.spec.js`.
   `aria-describedby`, `role="alert"` y foco al primer campo inválido
 - Skip-link, landmarks semánticos, un único `<h1>` por ruta y jerarquía de
   encabezados correcta
+- Al cambiar de ruta el foco pasa al `<h1>` de la página nueva (o al destino
+  del ancla), para que el lector de pantalla anuncie una navegación que no
+  recarga el documento; con `preventScroll`, sin tocar el desplazamiento ni el
+  respeto a `prefers-reduced-motion`
 - Acordeón FAQ y menú móvil con `aria-expanded`/`aria-controls`; el menú móvil
   se cierra con Escape y devuelve el foco al botón que lo abrió
 - Cinta de eventos con botón de pausa y `prefers-reduced-motion` respetado

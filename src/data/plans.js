@@ -108,6 +108,24 @@ export const POSING = {
   ],
 }
 
+/**
+ * Etiqueta con la que el cliente ve un precio concreto.
+ *
+ * Fuente única de ese nombre: la usan las opciones del formulario
+ * (`PLAN_OPTIONS`), la preselección al pulsar «Solicitar …», el mensaje que
+ * se envía por WhatsApp o email y el `name` de cada `Offer` del JSON-LD. Si
+ * cada sitio la construyera por su cuenta, el cliente podría pedir «Posing ·
+ * 4 clases» y el buscador anunciar «Bono de 4 clases · 4 clases».
+ *
+ * En posing manda el nombre del área («Posing · 1 clase»): los packs se
+ * llaman «Clase suelta» y «Bono de 4 clases», nombres que ya repiten la
+ * duración. En entrenamiento manda el nombre del plan («Start · 3 meses»),
+ * que es lo que distingue una tarifa de otra.
+ */
+export function priceLabel(area, group, price) {
+  return `${area.packs ? area.name : group.name} · ${price.label}`
+}
+
 /** Importe de entrada de un área, para el «desde» de la home. */
 export function cheapest(area) {
   const groups = area.tiers ?? area.packs

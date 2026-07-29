@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { PAGES, buildJsonLd, buildMetaTags, buildSitemap, renderHead } from './seo.js'
+import { PLAN_OPTIONS } from '../utils/validation.js'
 
 describe('buildMetaTags', () => {
   it('da a cada ruta una canónica que apunta a sí misma', () => {
@@ -26,6 +27,27 @@ describe('buildJsonLd', () => {
   it('publica las ofertas de posing', () => {
     const service = buildJsonLd('posing')['@graph'].find((n) => n['@type'] === 'Service')
     expect(service.hasOfferCatalog.itemListElement.map((o) => o.price)).toEqual(['60', '200'])
+  })
+
+  // Los importes ya coincidían, pero los nombres no: el JSON-LD anunciaba
+  // «Bono de 4 clases · 4 clases» mientras el formulario y el mensaje de
+  // WhatsApp decían «Posing · 4 clases».
+  it('nombra cada Offer como la ve el cliente en el formulario', () => {
+    for (const key of ['training', 'posing']) {
+      const service = buildJsonLd(key)['@graph'].find((n) => n['@type'] === 'Service')
+      for (const offer of service.hasOfferCatalog.itemListElement) {
+        expect(PLAN_OPTIONS).toContain(offer.name)
+      }
+    }
+  })
+
+  it('publica una Offer por cada tarifa del formulario', () => {
+    const nombres = ['training', 'posing'].flatMap((key) =>
+      buildJsonLd(key)
+        ['@graph'].find((n) => n['@type'] === 'Service')
+        .hasOfferCatalog.itemListElement.map((offer) => offer.name),
+    )
+    expect(nombres.sort()).toEqual([...PLAN_OPTIONS].sort())
   })
 
   it('incluye migas de pan en las rutas de servicio', () => {

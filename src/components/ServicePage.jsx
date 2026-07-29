@@ -3,6 +3,7 @@ import ChromeHeading from './ui/ChromeHeading.jsx'
 import PlanGrid from './PlanGrid.jsx'
 import ContactForm from './ContactForm.jsx'
 import SectionDivider from './ui/SectionDivider.jsx'
+import { priceLabel } from '../data/plans.js'
 
 /**
  * Plantilla de las dos páginas de servicio.
@@ -15,12 +16,11 @@ export default function ServicePage({ area, plans, faqs, intro }) {
   const [preset, setPreset] = useState('')
   const formRef = useRef(null)
 
-  const select = (planId, priceLabel) => {
+  const select = (planId, label) => {
     const plan = plans.find((p) => p.id === planId)
-    const label = area.packs ? `Posing · ${priceLabel}` : `${plan.name} · ${priceLabel}`
-    setPreset(label)
+    setPreset(priceLabel(area, plan, { label }))
     formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    // El campo existe tras el re-render provocado por setPreset.
+    // Tras el re-render el campo ya lleva el plan elegido.
     requestAnimationFrame(() => document.getElementById('plan')?.focus())
   }
 
@@ -85,7 +85,10 @@ export default function ServicePage({ area, plans, faqs, intro }) {
             <p className="mx-auto mb-9 max-w-lg text-center text-[15px] leading-relaxed text-dim [text-wrap:pretty]">
               Las plazas del equipo son limitadas. Chery revisa personalmente cada solicitud.
             </p>
-            <ContactForm key={preset} presetPlan={preset} />
+            {/* Sin `key`: remontar el formulario al cambiar de plan borraba
+                todo lo escrito (nombre, email, el párrafo sobre lesiones…).
+                `ContactForm` sincroniza solo el campo `plan` con `presetPlan`. */}
+            <ContactForm presetPlan={preset} />
           </div>
         </div>
       </section>

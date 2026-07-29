@@ -7,19 +7,19 @@
 // definitiva serán las consultas parametrizadas del servidor; esto es la
 // primera capa.
 
-import { TRAINING, POSING } from '../data/plans.js'
+import { TRAINING, POSING, priceLabel } from '../data/plans.js'
 
 /**
- * Etiquetas de plan aceptadas. Se derivan de plans.js, así que un precio
- * nuevo aparece en el formulario sin tocar este fichero.
+ * Etiquetas de plan aceptadas. Se derivan de plans.js con `priceLabel`, la
+ * misma función que usan la preselección de la página de servicio y el JSON-LD,
+ * así que un precio nuevo aparece en el formulario sin tocar este fichero y
+ * con exactamente el mismo nombre en los tres sitios.
  */
 export const PLAN_OPTIONS = [
   ...TRAINING.tiers.flatMap((tier) =>
-    tier.prices.map((price) => `${tier.name} · ${price.label}`),
+    tier.prices.map((price) => priceLabel(TRAINING, tier, price)),
   ),
-  ...POSING.packs.flatMap((pack) =>
-    pack.prices.map((price) => `Posing · ${price.label}`),
-  ),
+  ...POSING.packs.flatMap((pack) => pack.prices.map((price) => priceLabel(POSING, pack, price))),
 ]
 
 export const OBJETIVOS = [

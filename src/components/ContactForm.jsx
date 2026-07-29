@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { CONTACT, CONTACT_LINKS } from '../data/content.js'
+import { useEffect, useRef, useState } from 'react'
+import { CONTACT_LINKS } from '../data/content.js'
 import {
   PATTERNS,
   MAX_LENGTH,
@@ -35,6 +35,19 @@ export default function ContactForm({ presetPlan = '' }) {
   const [values, setValues] = useState({ ...INITIAL, plan: presetPlan })
   const [errors, setErrors] = useState({})
   const [status, setStatus] = useState('')
+
+  // Comparar tarifas antes de decidirse es lo normal en una página de
+  // precios, así que elegir otro plan NO puede costar lo ya escrito. Este
+  // efecto sincroniza SOLO el campo `plan`, y sólo cuando `presetPlan` cambia
+  // de verdad: si el visitante elige a mano otra opción del desplegable, un
+  // re-render del padre no se la pisa.
+  const lastPreset = useRef(presetPlan)
+  useEffect(() => {
+    if (presetPlan === lastPreset.current) return
+    lastPreset.current = presetPlan
+    setValues((v) => ({ ...v, plan: presetPlan }))
+    setErrors((e) => (e.plan ? { ...e, plan: undefined } : e))
+  }, [presetPlan])
 
   const setField = (id, value) => {
     setValues((v) => ({ ...v, [id]: value }))

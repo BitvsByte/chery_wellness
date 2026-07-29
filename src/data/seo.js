@@ -1,9 +1,12 @@
 // Capa SEO: identidad del sitio, metaetiquetas sociales y JSON-LD.
-// Se consume en tiempo de build desde `vite.config.js` (plugin `seoHtml`),
-// por lo que nada de esto llega al bundle del cliente.
+// Se consume sobre todo en tiempo de build desde `vite.config.js` (plugin
+// `seoHtml`). El cliente sólo importa `PAGES`, `SITE`, `NOT_FOUND` y
+// `ROBOTS_INDEX` (ver `DocumentHead.jsx`, que mantiene el <title> y la
+// canónica al día en las navegaciones internas); el resto lo descarta el
+// tree-shaking.
 
 import { CONTACT, CONTACT_LINKS, FAQS_TRAINING, FAQS_POSING } from './content.js'
-import { ROUTES, TRAINING, POSING } from './plans.js'
+import { ROUTES, TRAINING, POSING, priceLabel } from './plans.js'
 
 export const SITE = {
   // Host canónico. Si prefieres fijar `www` como canónico, cambia esta línea
@@ -43,6 +46,24 @@ export const PAGES = {
     description:
       'Clases de posing de competición en sala privada, desde 60 €. Técnica de pose, transiciones y poses reglamentarias Wellness con Chery Figueroa, IFBB Pro.',
   },
+}
+
+/**
+ * Contenido de `<meta name="robots">` de las tres rutas indexables. Se
+ * exporta porque `DocumentHead` tiene que reponerlo al volver a una ruta
+ * indexable desde la pantalla de «página no encontrada», que es `noindex`.
+ */
+export const ROBOTS_INDEX =
+  'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
+
+/**
+ * Cabecera de la pantalla de URL desconocida. Deliberadamente FUERA de
+ * `PAGES`: no es una página indexable, no va al sitemap y no se prerenderiza
+ * — sólo existe en cliente, cuando la ruta pedida no casa con ninguna.
+ */
+export const NOT_FOUND = {
+  title: `Página no encontrada — ${SITE.name}`,
+  robots: 'noindex, follow',
 }
 
 /** Nombre con el que compite y aparece en los rankings oficiales IFBB/NPC. */
@@ -204,7 +225,9 @@ function serviceGraph(area, groups, pageKey, faqs) {
           itemListElement: groups.flatMap((group) =>
             group.prices.map((price) => ({
               '@type': 'Offer',
-              name: `${group.name} · ${price.label}`,
+              // Mismo nombre que ve el cliente en el formulario y en el
+              // mensaje de WhatsApp: `priceLabel` es la fuente única.
+              name: priceLabel(area, group, price),
               description: group.summary,
               price: String(price.amount),
               priceCurrency: 'EUR',
@@ -248,7 +271,7 @@ export function buildMetaTags(pageKey = 'home') {
   const url = `${SITE.url}${page.path}`
   return [
     { rel: 'canonical', href: url },
-    { name: 'robots', content: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' },
+    { name: 'robots', content: ROBOTS_INDEX },
     { name: 'author', content: ATHLETE.legalName },
 
     { property: 'og:type', content: 'website' },

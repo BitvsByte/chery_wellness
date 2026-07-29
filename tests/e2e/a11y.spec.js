@@ -41,6 +41,52 @@ for (const route of ROUTES) {
   })
 }
 
+// I4: sin ruta comodín, `/precios` devolvía 200 con `#contenido` vacío y el
+// <head> de la portada: página en blanco y soft-404 indexable.
+test('una URL desconocida muestra el aviso, no una página en blanco', async ({ page }) => {
+  await page.goto('/precios')
+  await expect(page.locator('h1')).toHaveCount(1)
+  await expect(page.locator('h1')).toHaveText('Página no encontrada')
+  await expect(page.locator('main#contenido a')).toHaveCount(3)
+  expect(await page.locator('meta[name=robots]').getAttribute('content')).toContain('noindex')
+  expect(await page.locator('link[rel=canonical]').getAttribute('href')).toBeNull()
+})
+
+test('axe no reporta violaciones en una URL desconocida', async ({ page }) => {
+  await page.goto('/precios')
+  const { violations } = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+    .analyze()
+  expect(violations.map((v) => `${v.id}: ${v.nodes.length} nodo(s)`)).toEqual([])
+})
+
+// I5: al navegar por dentro cambiaban la URL y el h1, pero el título y la
+// canónica seguían siendo los de la portada toda la sesión.
+test('el título y la canónica se actualizan al navegar por dentro', async ({ page }) => {
+  await page.goto('/')
+  const homeTitle = await page.title()
+
+  await page.getByRole('link', { name: 'Posing', exact: true }).first().click()
+  await expect(page).toHaveURL('/posing')
+
+  await expect(page).toHaveTitle(/Posing/)
+  expect(await page.title()).not.toBe(homeTitle)
+  expect(await page.locator('link[rel=canonical]').getAttribute('href')).toBe(
+    'https://cherywellnesspro.com/posing',
+  )
+})
+
+// I6: el CTA apuntaba siempre a `/#contacto` y expulsaba de la página al
+// visitante, perdiendo el plan que acababa de mirar.
+test('el CTA de la cabecera lleva al formulario de la propia página de servicio', async ({
+  page,
+}) => {
+  await page.goto('/posing')
+  await page.getByRole('link', { name: 'Solicitar consulta' }).first().click()
+  await expect(page).toHaveURL('/posing#solicitar')
+  await expect(page.locator('h1')).toHaveText('Posing')
+})
+
 test('el salto desde un plan preselecciona ese plan', async ({ page }) => {
   await page.goto('/entrenamiento-y-dietas')
   await page.getByRole('button', { name: 'Solicitar 3 meses' }).first().click()

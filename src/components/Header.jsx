@@ -1,12 +1,29 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { NAV_LINKS } from '../data/content.js'
+import { ROUTES } from '../data/plans.js'
 import { IconMenu, IconClose } from './ui/Icons.jsx'
+
+const SERVICE_PATHS = [ROUTES.training, ROUTES.posing]
+
+/**
+ * Destino del CTA principal.
+ *
+ * En una página de servicio apunta a su propio `#solicitar` — el formulario
+ * que ya está debajo, con el plan que el visitante acaba de mirar. Apuntar
+ * siempre a `/#contacto` lo expulsaba a la portada y le hacía perder el plan.
+ * En la portada, que no tiene `#solicitar`, se mantiene `/#contacto`.
+ */
+export function ctaTarget(pathname) {
+  const path = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname
+  return SERVICE_PATHS.includes(path) ? `${path}#solicitar` : `${ROUTES.home}#contacto`
+}
 
 export default function Header() {
   const [open, setOpen] = useState(false)
   const toggleRef = useRef(null)
   const close = () => setOpen(false)
+  const cta = ctaTarget(useLocation().pathname)
 
   // Sin esto, quien navega con teclado queda atrapado dentro del menú abierto.
   useEffect(() => {
@@ -59,7 +76,7 @@ export default function Header() {
               {link.label}
             </Link>
           ))}
-          <Link to="/#contacto" className="btn-chrome ml-2 whitespace-nowrap px-5 text-xs">
+          <Link to={cta} className="btn-chrome ml-2 whitespace-nowrap px-5 text-xs">
             Solicitar consulta
           </Link>
         </nav>
@@ -95,7 +112,7 @@ export default function Header() {
             </li>
           ))}
           <li className="pb-2 pt-3">
-            <Link to="/#contacto" onClick={close} className="btn-chrome w-full">
+            <Link to={cta} onClick={close} className="btn-chrome w-full">
               Solicitar consulta
             </Link>
           </li>

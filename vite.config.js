@@ -13,6 +13,7 @@ import {
   renderHead,
 } from './src/data/seo.js'
 import { ROUTES } from './src/data/plans.js'
+import { buildNavigateFallbackDenylist, buildRouteAliasEntries } from './src/utils/sw-routes.js'
 
 const ROOT = dirname(fileURLToPath(import.meta.url))
 const SSR_ENTRY = resolve(ROOT, 'dist-ssr/entry-server.js')
@@ -29,12 +30,10 @@ const DIST_DIR = resolve(ROOT, 'dist')
 // Las tres rutas de `ROUTES` ya están precacheadas cada una con su propio
 // HTML (ver `closeBundle` más abajo), así que no necesitan el fallback
 // genérico: basta con excluirlas de él para que cada una resuelva con su
-// propio HTML. Se deriva de `ROUTES` en vez de escribirse a mano para que
-// una ruta nueva no vuelva a romper esto en silencio.
-const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-const NAVIGATE_FALLBACK_DENYLIST = Object.values(ROUTES).map(
-  (route) => new RegExp(`^${escapeRegExp(route)}/?$`),
-)
+// propio HTML. Los patrones se derivan de `ROUTES` en `src/utils/sw-routes.js`
+// (probado en `sw-routes.test.js`) para que una ruta nueva no vuelva a romper
+// esto en silencio.
+const NAVIGATE_FALLBACK_DENYLIST = buildNavigateFallbackDenylist(ROUTES)
 
 // Marcador que deja `transformIndexHtml` en build, para que `closeBundle` lo
 // sustituya por el <head> de cada ruta una vez conoce el HTML final con las
@@ -221,6 +220,16 @@ export default defineConfig(({ command, isSsrBuild }) => ({
               maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
               navigateFallback: 'index.html',
               navigateFallbackDenylist: NAVIGATE_FALLBACK_DENYLIST,
+              // Sin esto, sin conexión sólo cargaban `/` y `/posing/`: la
+              // forma canónica sin barra final (`/posing`) no la encuentra el
+              // precache, porque workbox nunca prueba la variante
+              // `<ruta>/index.html` para una URL que no acaba en barra. Ver
+              // `buildRouteAliasEntries` en `src/utils/sw-routes.js`.
+              manifestTransforms: [
+                (manifest) => ({
+                  manifest: [...manifest, ...buildRouteAliasEntries(ROUTES, manifest)],
+                }),
+              ],
             },
           }),
         ]),
