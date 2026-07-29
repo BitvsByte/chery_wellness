@@ -28,7 +28,7 @@ export default function AreaCard({ area, to, unit, img, imgAlt }) {
         <p className="mt-2.5 flex-1 text-[15px] leading-relaxed text-body [text-wrap:pretty]">
           {area.summary}
         </p>
-        <p className="mt-4 text-sm text-dim">
+        <p className="mt-4 text-[15px] text-dim">
           Desde{' '}
           <span className="nums font-display text-xl font-bold text-bright">
             {formatEuro(cheapest(area))}
