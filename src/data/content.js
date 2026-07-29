@@ -29,48 +29,6 @@ export const NAV_LINKS = [
   { to: `${ROUTES.home}#contacto`, label: 'Contacto' },
 ]
 
-export const SERVICES = [
-  {
-    id: 'servicio-posing',
-    img: '/uploads/chery_2.jpeg',
-    imgAlt:
-      'Chery Figueroa posando en la tarima del Miami Pro con bikini de competición azul',
-    imgWidth: 1080,
-    imgHeight: 1672,
-    imgPos: '50% 12%',
-    tag: 'Domina el escenario',
-    title: 'Posing de Competición (Bikini Wellness)',
-    desc: 'Técnica de pose frontal, transiciones y poses reglamentarias Wellness. Posing para Bikini y Wellness con Chery Figueroa, Atleta Internacional.',
-    cta: 'Ver detalles',
-  },
-  {
-    id: 'servicio-dietas',
-    img: '/uploads/chery_4.jpeg',
-    imgAlt:
-      'Chery Figueroa en condición de competición durante el IFBB Pro League de Pittsburgh',
-    imgWidth: 1080,
-    imgHeight: 1718,
-    imgPos: '50% 10%',
-    tag: 'Nutrición de élite',
-    title: 'Dietas & Puesta a Punto (Prep)',
-    desc: 'Planes nutricionales específicos para cada etapa, definición extrema y puesta a punto de competición. Maximiza tus resultados.',
-    cta: 'Aplicar',
-  },
-  {
-    id: 'servicio-entrenos',
-    img: '/uploads/chery_1.jpeg',
-    imgAlt:
-      'Pose de espalda de Chery Figueroa mostrando el desarrollo de glúteo y pierna de la línea Wellness',
-    imgWidth: 1080,
-    imgHeight: 1592,
-    imgPos: '50% 40%',
-    tag: 'Entreno de campeona',
-    title: 'Entrenamientos de Altas Mejoras',
-    desc: 'Planes de entrenamiento específicos para altas mejoras físicas, de principiante a atleta Wellness Pro. Transformación total.',
-    cta: 'Ver detalles',
-  },
-]
-
 export const EVENTS = [
   { date: 'SEP 2026', name: 'Campeonato de España IFBB' },
   { date: 'OCT 2026', name: 'Arnold Classic Europe · Sevilla' },
