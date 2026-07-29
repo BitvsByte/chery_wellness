@@ -16,6 +16,7 @@ import { ROUTES } from './src/data/plans.js'
 
 const ROOT = dirname(fileURLToPath(import.meta.url))
 const SSR_ENTRY = resolve(ROOT, 'dist-ssr/entry-server.js')
+const DIST_DIR = resolve(ROOT, 'dist')
 
 // Marcador que deja `transformIndexHtml` en build, para que `closeBundle` lo
 // sustituya por el <head> de cada ruta una vez conoce el HTML final con las
@@ -101,7 +102,7 @@ function seoHtml({ isBuild }) {
         )
       }
 
-      const distDir = resolve(ROOT, 'dist')
+      const distDir = DIST_DIR
       const template = readFileSync(resolve(distDir, 'index.html'), 'utf8')
 
       if (!template.includes(SEO_SLOT)) {
@@ -129,6 +130,34 @@ function seoHtml({ isBuild }) {
       writeFileSync(resolve(distDir, 'sitemap.xml'), buildSitemap(lastmod))
       writeFileSync(resolve(distDir, 'robots.txt'), buildRobots())
       this.info(`Prerenderizadas ${Object.keys(ROUTES).length} rutas`)
+    },
+
+    // `vite preview` sirve `dist/` con el middleware de fallback SPA de Vite,
+    // que para una ruta sin extensión ni barra final sólo prueba
+    // `<ruta>.html` antes de rendirse a `/index.html`. Nuestras rutas son
+    // directorios (`dist/entrenamiento-y-dietas/index.html`), así que sin
+    // este middleware `npm run preview` serviría la home para
+    // `/entrenamiento-y-dietas`, con su canónica y su HTML equivocados: un
+    // host de producción con "clean URLs" (Netlify, Vercel, Nginx con
+    // try_files) sí resuelve ese directorio, así que replicamos ese
+    // comportamiento aquí para que la vista previa coincida con producción.
+    //
+    // Se registra llamando a `server.middlewares.use` directamente (no
+    // devolviendo una función), así que Vite lo instala ANTES que su propio
+    // fallback SPA.
+    configurePreviewServer(server) {
+      server.middlewares.use((req, res, next) => {
+        if (req.method !== 'GET' && req.method !== 'HEAD') return next()
+        const pathname = decodeURIComponent((req.url ?? '').split('?')[0])
+        if (pathname === '/' || pathname.includes('.') || pathname.endsWith('/')) {
+          return next()
+        }
+        const indexPath = resolve(DIST_DIR, `.${pathname}`, 'index.html')
+        if (existsSync(indexPath)) {
+          req.url = `${pathname}/index.html`
+        }
+        next()
+      })
     },
   }
 }

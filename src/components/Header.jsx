@@ -44,7 +44,12 @@ export default function Header() {
           </span>
         </Link>
 
-        <nav aria-label="Principal" className="hidden items-center gap-7 lg:flex">
+        {/* Los 6 enlaces más el botón "Solicitar consulta" necesitan más de
+            1100px; con el corte en `lg` (1024px) el menú desbordaba
+            horizontalmente justo al cruzar ese punto de ruptura. `xl`
+            (1280px) es el primer punto de ruptura donde entra sin recortar
+            ningún enlace. */}
+        <nav aria-label="Principal" className="hidden items-center gap-7 xl:flex">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.to}
@@ -62,7 +67,7 @@ export default function Header() {
         <button
           ref={toggleRef}
           type="button"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-line text-bright lg:hidden"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-line text-bright xl:hidden"
           aria-expanded={open}
           aria-controls="menu-movil"
           onClick={() => setOpen(!open)}
@@ -75,7 +80,7 @@ export default function Header() {
       <nav
         id="menu-movil"
         aria-label="Principal móvil"
-        className={`${open ? 'block' : 'hidden'} glass-dark border-t lg:hidden`}
+        className={`${open ? 'block' : 'hidden'} glass-dark border-t xl:hidden`}
       >
         <ul className="mx-auto flex max-w-6xl flex-col px-4 py-3">
           {NAV_LINKS.map((link) => (
