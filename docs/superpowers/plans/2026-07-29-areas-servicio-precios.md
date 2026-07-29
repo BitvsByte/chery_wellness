@@ -694,7 +694,10 @@ const renderCard = () =>
 describe('AreaCard', () => {
   it('muestra el precio de entrada del área', () => {
     renderCard()
-    expect(screen.getByText(/100\u00A0€/)).toBeInTheDocument()
+    // Espacio NORMAL, no U+00A0: el normalizador por defecto de Testing Library
+    // colapsa el espacio duro antes de comparar, asi que una regex con espacio
+    // duro no coincidiria nunca. El espacio duro real se verifica en format.test.js.
+    expect(screen.getByText(/100 €/)).toBeInTheDocument()
     expect(screen.getByText(/mes/)).toBeInTheDocument()
   })
 
@@ -775,7 +778,7 @@ export default function AreaCard({ area, to, unit, img, imgAlt }) {
         <p className="mt-2.5 flex-1 text-[15px] leading-relaxed text-body [text-wrap:pretty]">
           {area.summary}
         </p>
-        <p className="mt-4 text-sm text-dim">
+        <p className="mt-4 text-[15px] text-dim">
           Desde{' '}
           <span className="nums font-display text-xl font-bold text-bright">
             {formatEuro(cheapest(area))}
