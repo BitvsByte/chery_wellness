@@ -189,24 +189,37 @@ export const FAQS = [
   {
     q: '¿Necesito experiencia para empezar?',
     a: 'No. El método está pensado para llevarte de cero a competir. Empezamos con una evaluación de tu punto de partida y construimos base de entrenamiento, nutrición y posing por etapas.',
+    area: 'training',
   },
   {
     q: '¿El coaching es online o presencial?',
     a: 'Ambos. Las asesorías de nutrición y entrenamiento funcionan 100% online con seguimiento semanal. Las clases de posing pueden ser presenciales en España u online por videollamada con corrección en directo.',
+    area: 'posing',
   },
   {
     q: '¿Cuánto dura una preparación completa?',
     a: 'Depende de tu punto de partida. Una primera competición suele requerir entre 8 y 14 meses: fase de mejora, fase de definición y puesta a punto. En la consulta inicial te damos una estimación honesta.',
+    area: 'training',
   },
   {
     q: '¿Qué incluye el seguimiento?',
     a: 'Plan de entrenamiento y dieta personalizados, ajustes semanales con fotos y feedback, técnica de posing, planificación de temporada y acceso directo a Chery por WhatsApp.',
+    area: 'training',
   },
   {
     q: '¿Y si no quiero competir?',
     a: 'También trabajamos mejora física sin tarima: recomposición corporal con el mismo nivel de exigencia y personalización que una prep de competición.',
+    area: 'training',
   },
 ]
+
+/**
+ * Reparto EXCLUSIVO por área de las FAQ ya existentes: cada pregunta vive en
+ * una sola página de servicio, para no publicar el mismo marcado de pregunta
+ * en dos URLs (la home sigue mostrando las cinco, sin repartir).
+ */
+export const FAQS_TRAINING = FAQS.filter((faq) => faq.area === 'training')
+export const FAQS_POSING = FAQS.filter((faq) => faq.area === 'posing')
 
 export const QUOTE = {
   img: '/uploads/chery_3.jpeg',

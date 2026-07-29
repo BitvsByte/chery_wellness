@@ -2,6 +2,8 @@ import { Routes, Route } from 'react-router-dom'
 import Header from './components/Header.jsx'
 import Footer from './components/Footer.jsx'
 import Home from './pages/Home.jsx'
+import TrainingPage from './pages/TrainingPage.jsx'
+import PosingPage from './pages/PosingPage.jsx'
 import ScrollToHash from './components/ScrollToHash.jsx'
 import { ROUTES } from './data/plans.js'
 
@@ -19,6 +21,8 @@ export default function App() {
       <main id="contenido">
         <Routes>
           <Route path={ROUTES.home} element={<Home />} />
+          <Route path={ROUTES.training} element={<TrainingPage />} />
+          <Route path={ROUTES.posing} element={<PosingPage />} />
         </Routes>
       </main>
       <Footer />
