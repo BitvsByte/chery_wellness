@@ -25,11 +25,11 @@ export default function About() {
             <img
               src={ABOUT.mainImg}
               alt={ABOUT.mainImgAlt}
-              width="1080"
-              height="1718"
+              width={ABOUT.mainImgWidth}
+              height={ABOUT.mainImgHeight}
               loading="lazy"
-              className="h-[340px] w-full rounded-2xl border border-[rgba(209,213,219,0.4)] object-cover shadow-[0_18px_44px_rgba(0,0,0,0.6)]"
-              style={{ objectPosition: '50% 8%' }}
+              className="h-[420px] w-full rounded-2xl border border-[rgba(209,213,219,0.4)] object-cover shadow-[0_18px_44px_rgba(0,0,0,0.6)] sm:h-[480px]"
+              style={{ objectPosition: ABOUT.mainImgPos }}
             />
             <img
               src={ABOUT.teamImg}

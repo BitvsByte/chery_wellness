@@ -13,8 +13,11 @@ export default function Areas() {
             area={TRAINING}
             to={ROUTES.training}
             unit="mes"
-            img="/uploads/chery_4.jpeg"
-            imgAlt="Chery Figueroa en condición de competición durante el IFBB Pro League de Pittsburgh"
+            img="/uploads/entrenos.jpeg"
+            imgAlt="Chery Figueroa entrenando con una atleta del equipo junto al rack de mancuernas del gimnasio"
+            imgWidth={1080}
+            imgHeight={1620}
+            imgPos="50% 30%"
           />
           <AreaCard
             area={POSING}
@@ -22,6 +25,9 @@ export default function Areas() {
             unit="clase"
             img="/uploads/chery_2.jpeg"
             imgAlt="Chery Figueroa en pose frontal sobre la tarima del Miami Pro"
+            imgWidth={1080}
+            imgHeight={1672}
+            imgPos="50% 12%"
           />
         </div>
       </div>

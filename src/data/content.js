@@ -43,8 +43,14 @@ export const ABOUT = {
     'Chery Figueroa es atleta profesional de culturismo en la categoría Women’s Wellness y entrenadora personal. Originaria de Honduras y afincada en España, ha logrado múltiples títulos, incluyendo el campeonato absoluto de España y participaciones destacadas en eventos como el IFBB Optimum Classic Pro.',
     'Dedicación personalizada: asesorías de nutrición, planes de entrenamiento específicos y clases de posing para llevar a cada atleta de cero a la tarima, con el seguimiento cercano de un equipo de verdad — no una cuota mensual.',
   ],
-  mainImg: '/uploads/chery_4.jpeg',
-  mainImgAlt: 'Chery Figueroa, entrenadora y atleta profesional Wellness',
+  mainImg: '/uploads/equipo_2.jpeg',
+  mainImgAlt:
+    'Dos integrantes del equipo CW posando juntas en el estudio de entrenamiento',
+  mainImgWidth: 744,
+  mainImgHeight: 1128,
+  // Encuadre por debajo del centro: la foto es vertical y de cuerpo entero,
+  // así que sin esto la caja apaisada mostraría sobre todo el techo.
+  mainImgPos: '50% 22%',
   teamImg: '/uploads/equipo_1.jpeg',
   teamImgAlt: 'Dos atletas del equipo CW practicando posing en el estudio',
 }
@@ -180,8 +186,11 @@ export const FAQS_TRAINING = FAQS.filter((faq) => faq.area === 'training')
 export const FAQS_POSING = FAQS.filter((faq) => faq.area === 'posing')
 
 export const QUOTE = {
-  img: '/uploads/chery_3.jpeg',
-  alt: 'Chery Figueroa de espaldas en la tarima de competición',
+  img: '/uploads/escaleras.jpeg',
+  alt: 'Chery Figueroa sentada en las escaleras del gimnasio, mirando a cámara',
+  width: 1080,
+  height: 1620,
+  pos: '50% 32%',
   text: '“La tarima se gana meses antes, en cada detalle.”',
   author: 'Chery Figueroa',
 }

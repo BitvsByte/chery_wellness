@@ -6,18 +6,30 @@ import { formatEuro } from '../utils/format.js'
  * Tarjeta de área en la home. El «desde» filtra: quien pulsa ya conoce el
  * orden de precio, así que llegan menos consultas de curioseo.
  */
-export default function AreaCard({ area, to, unit, img, imgAlt }) {
+export default function AreaCard({
+  area,
+  to,
+  unit,
+  img,
+  imgAlt,
+  imgWidth,
+  imgHeight,
+  imgPos = '50% 20%',
+}) {
   return (
     <article className="card flex flex-col overflow-hidden">
-      <div className="mx-3 mt-3 h-64 overflow-hidden rounded-xl border border-line/80 sm:h-72">
+      {/* Proporción vertical fija en vez de una altura en píxeles: las fotos
+          son verticales (2:3) y con una caja apaisada se recortaba casi todo.
+          Al ir por proporción, la caja crece con la tarjeta en cada pantalla. */}
+      <div className="mx-3 mt-3 aspect-[4/5] overflow-hidden rounded-xl border border-line/80">
         <img
           src={img}
           alt={imgAlt}
-          width="1080"
-          height="1718"
+          width={imgWidth}
+          height={imgHeight}
           loading="lazy"
           className="h-full w-full object-cover"
-          style={{ objectPosition: '50% 12%' }}
+          style={{ objectPosition: imgPos }}
         />
       </div>
       <div className="flex flex-1 flex-col px-6 pb-7 pt-6">

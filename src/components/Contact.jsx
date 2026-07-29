@@ -72,11 +72,11 @@ export default function Contact() {
                 <img
                   src={QUOTE.img}
                   alt={QUOTE.alt}
-                  width="1080"
-                  height="1714"
+                  width={QUOTE.width}
+                  height={QUOTE.height}
                   loading="lazy"
-                  className="h-[250px] w-full object-cover"
-                  style={{ objectPosition: '50% 12%' }}
+                  className="h-[320px] w-full object-cover"
+                  style={{ objectPosition: QUOTE.pos }}
                 />
                 <div
                   aria-hidden="true"
