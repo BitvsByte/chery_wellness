@@ -84,9 +84,22 @@ function seoHtml({ isBuild }) {
     // un build real.
     async closeBundle() {
       // En dev este hook no debería dispararse (closeBundle es de Rollup, no
-      // del servidor de dev), pero comprobamos igualmente `isBuild` y que el
-      // bundle SSR exista: así nunca se sirve un prerender obsoleto.
-      if (!isBuild || !existsSync(SSR_ENTRY)) return
+      // del servidor de dev), pero comprobamos igualmente `isBuild` por si
+      // acaso: ahí sí es correcto salir en silencio.
+      if (!isBuild) return
+
+      // En build, en cambio, que falte el bundle SSR es un fallo real: si se
+      // ejecuta `vite build` sin haber corrido antes `build:ssr` (por
+      // ejemplo, un pipeline que separa los pasos), sin esta comprobación el
+      // marcador SEO_SLOT quedaría literal en el HTML, `<div id="root">`
+      // vacío, y el proceso terminaría con código de salida 0: workbox
+      // precachearía ese HTML roto y lo serviría como si fuera válido.
+      if (!existsSync(SSR_ENTRY)) {
+        this.error(
+          `No existe ${SSR_ENTRY}. El build de cliente necesita el bundle SSR: ` +
+            'ejecuta `npm run build`, que encadena build:ssr antes de vite build.',
+        )
+      }
 
       const distDir = resolve(ROOT, 'dist')
       const template = readFileSync(resolve(distDir, 'index.html'), 'utf8')
