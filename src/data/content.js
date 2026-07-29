@@ -1,17 +1,21 @@
 // Contenido de marca centralizado — un solo lugar para editar textos y datos.
 
 export const CONTACT = {
-  phone: '+34 600 000 000',
+  phone: '+34 677 00 67 45',
   email: 'cheryfigueroa.pro@gmail.com',
-  instagram: '@cheryfigueroa_wellnesspro',
-  tiktok: '@cheryfigueroa_pro',
+  instagram: '@chery_ifbbpro',
+  // Handle de TikTok sin verificar: déjalo en null para no publicar un enlace
+  // roto. Al rellenarlo, el canal reaparece solo en Contacto y en `sameAs`.
+  tiktok: null,
 }
 
 export const CONTACT_LINKS = {
   whatsapp: `https://wa.me/${CONTACT.phone.replace(/[^0-9]/g, '')}`,
   mailto: `mailto:${CONTACT.email}`,
-  instagram: `https://instagram.com/${CONTACT.instagram.replace('@', '')}`,
-  tiktok: `https://tiktok.com/@${CONTACT.tiktok.replace('@', '')}`,
+  instagram: `https://www.instagram.com/${CONTACT.instagram.replace('@', '')}`,
+  tiktok: CONTACT.tiktok
+    ? `https://www.tiktok.com/@${CONTACT.tiktok.replace('@', '')}`
+    : null,
 }
 
 export const NAV_LINKS = [

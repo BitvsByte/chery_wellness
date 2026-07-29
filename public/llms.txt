@@ -1,8 +1,27 @@
 # Chery Figueroa Wellness PRO
 
-Web oficial de Chery Figueroa, atleta profesional IFBB de la categoría Women's
-Wellness y entrenadora personal. Elite coaching de bodybuilding: posing de
-competición, dietas y puesta a punto (prep) y entrenamiento de altas mejoras.
+Web oficial de Chery Figueroa (nombre completo de competición: Chery Figueroa
+Calix), atleta profesional IFBB de la categoría Women's Wellness y entrenadora
+personal. Elite coaching de bodybuilding: posing de competición, dietas y puesta
+a punto (prep) y entrenamiento de altas mejoras.
+
+Originaria de Honduras y afincada en España. Coaching online para todo el mundo
+y clases de posing presenciales en España.
+
+## Palmarés
+
+- Campeona absoluta de España IFBB — Women's Wellness
+- 1.ª clasificada Women's Wellness hasta 163 cm — IFBB Fitness World Cup 2022
+- 3.ª clasificada — IFBB Empro Classic Pro 2025
+- Competidora IFBB Pro League — Pittsburgh Pro 2025
+
+## Servicios
+
+- Posing de Competición (Bikini Wellness): técnica de pose frontal, transiciones
+  y poses reglamentarias Wellness.
+- Dietas & Puesta a Punto (Prep): planes nutricionales por etapa, definición y
+  puesta a punto de competición.
+- Entrenamientos de Altas Mejoras: de principiante a atleta Wellness Pro.
 
 ## Secciones
 
@@ -11,3 +30,9 @@ competición, dietas y puesta a punto (prep) y entrenamiento de altas mejoras.
 - [Testimonios](/#testimonios): resultados de atletas del equipo
 - [Galería](/#galeria): fotos de competición
 - [Contacto](/#contacto): solicitud de consulta por WhatsApp o email
+
+## Contacto
+
+- Teléfono / WhatsApp: +34 677 00 67 45
+- Email: cheryfigueroa.pro@gmail.com
+- Instagram: https://www.instagram.com/chery_ifbbpro

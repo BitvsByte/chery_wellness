@@ -28,7 +28,7 @@ const CHANNELS = [
     label: `TikTok · ${CONTACT.tiktok}`,
     external: true,
   },
-]
+].filter((channel) => Boolean(channel.href))
 
 export default function Contact() {
   return (

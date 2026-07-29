@@ -6,7 +6,8 @@
   "description": "PWA oficial de Chery Figueroa Wellness PRO — elite coaching, bodybuilding y wellness aesthetics",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run build:ssr && vite build",
+    "build:ssr": "vite build --ssr src/entry-server.jsx --outDir dist-ssr",
     "preview": "vite preview"
   },
   "dependencies": {

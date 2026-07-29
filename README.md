@@ -16,15 +16,39 @@ entrenadora personal: elite coaching de posing, dietas de prep y entrenamiento.
 ```bash
 npm install       # instalar dependencias
 npm run dev       # desarrollo en http://localhost:5173
-npm run build     # build de producción en dist/
+npm run build     # build SSR + cliente, con prerender y SEO, en dist/
 npm run preview   # sirve dist/ en http://localhost:4173
 ```
+
+`npm run build` son dos pasos encadenados: primero `build:ssr` compila
+`src/entry-server.jsx` en `dist-ssr/`, y después el build de cliente usa ese
+módulo para incrustar el HTML ya renderizado en `dist/index.html`. Ese orden es
+obligatorio: si se prerenderizara después, el hash de `index.html` en `sw.js`
+quedaría desincronizado y el service worker serviría una versión obsoleta.
+
+## SEO
+
+Todo lo que depende del dominio vive en `src/data/seo.js` (constante `SITE`), y
+el plugin `chery-seo-html` de `vite.config.js` lo inyecta en el build:
+
+- `<title>` y meta description — **no** los dupliques en `index.html`
+- `<link rel="canonical">` y `<meta name="robots">`
+- Open Graph + Twitter Cards (`summary_large_image`)
+- JSON-LD con `WebSite`, `Person`, `ProfessionalService`, `FAQPage` y `WebPage`,
+  generado a partir de `content.js` para que schema y web nunca se contradigan
+- `sitemap.xml` y `robots.txt` generados en `dist/` (no los edites a mano)
+- HTML prerenderizado: el crawler recibe la página completa, no un `<div>` vacío
+
+Pendiente: al confirmar la ciudad, sustituir `areaServed` por `address` + `geo`
+y elevar `ProfessionalService` a `LocalBusiness` para optar al pack local.
 
 ## Estructura
 
 ```
 src/
 ├── data/content.js        # textos, servicios, testimonios, FAQ, contacto
+├── data/seo.js            # dominio canónico, metaetiquetas, JSON-LD, sitemap
+├── entry-server.jsx       # render SSR usado para prerenderizar dist/index.html
 ├── utils/validation.js    # patrones de lista blanca + saneado del formulario
 ├── components/
 │   ├── ui/                # primitivas: ChromeHeading, Field, Icons, SectionDivider

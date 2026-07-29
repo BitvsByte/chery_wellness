@@ -7,8 +7,18 @@ import '@fontsource-variable/plus-jakarta-sans'
 import './index.css'
 import App from './App.jsx'
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+const container = document.getElementById('root')
+
+const tree = (
   <React.StrictMode>
     <App />
-  </React.StrictMode>,
+  </React.StrictMode>
 )
+
+// En producción el HTML llega prerenderizado, así que hidratamos en lugar de
+// volver a pintar. En `npm run dev` el contenedor está vacío y montamos normal.
+if (container.hasChildNodes()) {
+  ReactDOM.hydrateRoot(container, tree)
+} else {
+  ReactDOM.createRoot(container).render(tree)
+}
