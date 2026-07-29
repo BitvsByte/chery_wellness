@@ -18,6 +18,24 @@ const ROOT = dirname(fileURLToPath(import.meta.url))
 const SSR_ENTRY = resolve(ROOT, 'dist-ssr/entry-server.js')
 const DIST_DIR = resolve(ROOT, 'dist')
 
+// `VitePWA` registra por defecto un `NavigationRoute` sin allowlist ni
+// denylist, que en `generateSW` intercepta TODA navegación y responde con
+// `index.html` (la home) desde el precache — también para
+// `/entrenamiento-y-dietas` y `/posing`. Con el service worker activo, una
+// carga completa de página a cualquiera de las otras rutas recibía el
+// marcado de la home, y React fallaba al hidratar sobre él (visible un
+// instante como el contenido de la home antes de que React lo reemplazara).
+//
+// Las tres rutas de `ROUTES` ya están precacheadas cada una con su propio
+// HTML (ver `closeBundle` más abajo), así que no necesitan el fallback
+// genérico: basta con excluirlas de él para que cada una resuelva con su
+// propio HTML. Se deriva de `ROUTES` en vez de escribirse a mano para que
+// una ruta nueva no vuelva a romper esto en silencio.
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+const NAVIGATE_FALLBACK_DENYLIST = Object.values(ROUTES).map(
+  (route) => new RegExp(`^${escapeRegExp(route)}/?$`),
+)
+
 // Marcador que deja `transformIndexHtml` en build, para que `closeBundle` lo
 // sustituya por el <head> de cada ruta una vez conoce el HTML final con las
 // etiquetas de assets.
@@ -201,6 +219,8 @@ export default defineConfig(({ command, isSsrBuild }) => ({
             workbox: {
               globPatterns: ['**/*.{js,css,html,png,jpeg,jpg,svg,woff2}'],
               maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
+              navigateFallback: 'index.html',
+              navigateFallbackDenylist: NAVIGATE_FALLBACK_DENYLIST,
             },
           }),
         ]),
