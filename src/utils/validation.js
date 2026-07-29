@@ -7,6 +7,21 @@
 // definitiva serán las consultas parametrizadas del servidor; esto es la
 // primera capa.
 
+import { TRAINING, POSING } from '../data/plans.js'
+
+/**
+ * Etiquetas de plan aceptadas. Se derivan de plans.js, así que un precio
+ * nuevo aparece en el formulario sin tocar este fichero.
+ */
+export const PLAN_OPTIONS = [
+  ...TRAINING.tiers.flatMap((tier) =>
+    tier.prices.map((price) => `${tier.name} · ${price.label}`),
+  ),
+  ...POSING.packs.flatMap((pack) =>
+    pack.prices.map((price) => `Posing · ${price.label}`),
+  ),
+]
+
 export const OBJETIVOS = [
   'Primera competición',
   'Mejorar posing',
@@ -121,6 +136,10 @@ export function validateForm(values) {
     errors.telefono = 'Usa solo dígitos, espacios y un prefijo + opcional (8–15 dígitos).'
   }
 
+  if (v.plan && !PLAN_OPTIONS.includes(v.plan)) {
+    errors.plan = 'Elige una opción de la lista.'
+  }
+
   if (!v.objetivo) {
     errors.objetivo = 'Elige tu objetivo.'
   } else if (!OBJETIVOS.includes(v.objetivo)) {
@@ -157,6 +176,7 @@ export function buildMessage(values) {
   const v = sanitizeAll(values)
   return [
     'Hola Chery, quiero solicitar una consulta:',
+    `Plan: ${v.plan || '-'}`,
     `Nombre: ${v.nombre || '-'}`,
     `Email: ${v.email || '-'}`,
     `Teléfono: ${v.telefono || '-'}`,

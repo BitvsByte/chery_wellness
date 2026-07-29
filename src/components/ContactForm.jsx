@@ -3,6 +3,7 @@ import { CONTACT, CONTACT_LINKS } from '../data/content.js'
 import {
   PATTERNS,
   MAX_LENGTH,
+  PLAN_OPTIONS,
   OBJETIVOS,
   COMPETIDO,
   EXPERIENCIA,
@@ -16,6 +17,7 @@ import { TextField, SelectField, TextAreaField } from './ui/Field.jsx'
 import { IconWhatsApp, IconMail } from './ui/Icons.jsx'
 
 const INITIAL = {
+  plan: '',
   nombre: '',
   email: '',
   telefono: '',
@@ -29,8 +31,8 @@ const INITIAL = {
   empresa: '', // honeypot anti-bots: los humanos nunca lo ven ni lo rellenan
 }
 
-export default function ContactForm() {
-  const [values, setValues] = useState(INITIAL)
+export default function ContactForm({ presetPlan = '' }) {
+  const [values, setValues] = useState({ ...INITIAL, plan: presetPlan })
   const [errors, setErrors] = useState({})
   const [status, setStatus] = useState('')
 
@@ -115,6 +117,15 @@ export default function ContactForm() {
           value={values.telefono}
           onChange={setField}
           error={errors.telefono}
+        />
+        <SelectField
+          id="plan"
+          label="Plan que te interesa"
+          options={PLAN_OPTIONS}
+          placeholder="Aún no lo tengo claro"
+          value={values.plan}
+          onChange={setField}
+          error={errors.plan}
         />
         <SelectField
           id="objetivo"
